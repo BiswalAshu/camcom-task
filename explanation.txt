@@ -1,0 +1,24 @@
+EKS cluster
+    - eksctl was used from the file EKS-spec.yml
+    - policy for autoscaler to function and deployemnt of autoscaler in file in eksctl/
+
+k8s-cluster-ready
+    - MYSQL
+        - as we are going to deploy MYSQL which is a statful application the choice of resource is STATEFULSETS, over a deployemnt
+        - for storage I've used EBS 
+        - to leverage ebs the storage class used was aws-ebs
+        - once the persistent volume is up, for the data to be consistent even if the pods or even the satateful set being deleted, persistentVolumeReclaimPolicy "Retain" is used
+        - now for the statefulset, the pods have to be launched in the nodes running in AP-SOUTH-1A only as the EBS volume is created in same zone
+        - to ensure that NODE_SELECTOR was put with same zone name.
+    - deployemnt
+        - basic deployemnt file for a node js app created 
+        - said github repo has its own Dockerfile
+        - port exposed is 80
+        - docker image created and pushed to biswalashu/deploy-app
+        - HPA.YAML contains the pod autoscaler, CPU_Utilization_Percentage taken as metrics of choice to scale
+        - CLUSTER level auto scaling happens as cluster-autoscaler runs in kube-system namespace
+
+- CI/CD
+    - jenkins file with stges to clone, build, push and deploy the app 
+    - plugins used is kubernetes CLI
+    - credentials stored in jenkins cred store

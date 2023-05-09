@@ -1,0 +1,17 @@
+FOR CLUSTER
+write Terraform code to set up kubernetes cluster
+write terraform code to set up cluster auto scaler in the same cluster
+
+switch to eksctl terraform has lot of policy issues
+
+FOR MYSQL
+write persistent volume config for storage from EBS, 
+persistent volume claim config for accessing the storage from pv
+stateful set config for mysql to use the pvc
+
+create HorzontalPodAutoscaler for load based scaling of mysql pods
+
+ISSUES
+use aws-ebs for persistent volume
+EBS is zonal service, limited to either 1a or 1b or 1c, so if node exists in any other zone, pods will fail -- potential solution node taints and node affinity
+NODE_SELECTOR will trigger scale up if experssion doesnt match

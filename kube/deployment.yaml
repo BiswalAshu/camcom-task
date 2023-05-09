@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    env: test
+  name: deploy-app
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: 1
+  selector:
+    matchLabels:
+      env: test
+  template:
+    metadata:
+      name: "deploy-app"
+      labels:
+        env: test
+    spec:
+      containers:
+        - name: "deploy-app-container"
+          image: biswalashu/deploy-app:latest
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "256m"
+            limits:
+              memory: "512Mi"
+              cpu: "512m"

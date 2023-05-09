@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: aws-ebs
+  awsElasticBlockStore:
+    volumeID: vol-0fcc46008873c5a22
+    fsType: ext4
+  persistentVolumeReclaimPolicy: Retain
