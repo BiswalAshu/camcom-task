@@ -40,12 +40,12 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              until mysqladmin ping -h mysql-service.test-namespace.svc.cluster.local:3306 -u root -p$MYSQL_ROOT_PASSWORD --silent; do
+              until mysqladmin ping -h localhost:3306 -u root -p$MYSQL_ROOT_PASSWORD --silent; do
                 echo "not connected"
                 sleep 5
               done
               echo "connection established"
-              mysql -h mysql-service.test-namespace.svc.cluster.local:3306 -u root -p$MYSQL_ROOT_PASSWORD -e "source /docker-entrypoint-initdb.d/init.sql"
+              mysql -h localhost:3306 -u root -p$MYSQL_ROOT_PASSWORD -e "source /docker-entrypoint-initdb.d/init.sql"
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: root

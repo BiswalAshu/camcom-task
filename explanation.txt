@@ -14,6 +14,7 @@ k8s-cluster-ready
         - a config map is created to create a init.sql file that is supposed to hold all the queries
         - using the config map the /docker-entrypoint-initdb.d is mouted which holds the inti.sql
         - once the pods start the init container spins up and using `source` the init.sql is run to populate the volumes
+        - though the containers are in the same pod hence local host with port number is used for connecting
 
     - deployemnt
         - basic deployemnt file for a node js app created 
