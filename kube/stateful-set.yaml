@@ -7,11 +7,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: mysql-tryout
   template:
     metadata:
       labels:
-        app: mysql
+        app: mysql-tryout
     spec:
       nodeSelector:
         topology.kubernetes.io/zone: ap-south-1a
@@ -33,7 +33,72 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+      # init containers
+      initContainers:
+        - name: init-script
+          image: mysql:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              until mysqladmin ping -h mysql-service.test-namespace.svc.cluster.local:3306 -u root -p$MYSQL_ROOT_PASSWORD --silent; do
+                echo "not connected"
+                sleep 5
+              done
+              echo "connection established"
+              mysql -h mysql-service.test-namespace.svc.cluster.local:3306 -u root -p$MYSQL_ROOT_PASSWORD -e "source /docker-entrypoint-initdb.d/init.sql"
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+            - name: data-volume
+              mountPath: /docker-entrypoint-initdb.d
+
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: mysql-pvc
+        - name: data-volume
+          configMap:
+            name: data-config
+
+
+
+
+
+
+# init containers tryouts
+      # --- 
+        # - name: init-sql
+        #   image: alpine:latest
+        #   env:
+        #     - name: MYSQL_ROOT_PASSWORD
+        #       value: root
+        #   command: 
+        #     - sh
+        #     - "-c"
+        #     - |
+        #       echo "MySQL init started"
+        #       apk add --no-cache mysql-client
+        #       echo "MySQL client added"
+        #       until mysqladmin ping -h localhost -u root -p$MYSQL_ROOT_PASSWORD; do sleep 2; done
+        #       echo "CONNECTEDDD"
+        #       mysql -h localhost -u root -p$MYSQL_ROOT_PASSWORD -e "source /docker-entrypoint-initdb.d/init.sql"
+        #       echo "DONE"   
+
+        # ---  
+          # image: mysql-client:latest
+          # env:
+          #   - name: MYSQL_ROOT_PASSWORD
+          #     value: root
+          # command: ["/bin/sh", "-c"]
+          # args:
+          #   - |
+          #     until mysql -h mysql-service.test-namspace.cluster.svc.local -u root -p$MYSQL_ROOT_PASSWORD -e "source /docker-entrypoint-initdb.d/init.sql"; do sleep 3; echo "trying"; done
+
+          # volumeMounts:
+          #   - name: mysql-persistent-storage
+          #     mountPath: /var/lib/mysql
+          #   - name: data-volume
+          #     mountPath: /docker-entrypoint-initdb.d

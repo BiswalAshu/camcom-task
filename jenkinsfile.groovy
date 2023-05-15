@@ -38,7 +38,7 @@
                  withKubeConfig([credentialsId: KUBECONFIG]){
                     sh 'kubectl config use-context ${CLUSTER}'
                     // sh 'kubectl get pods -n ${NAMESPACE}'
-                    sh 'kubectl set image deployment/deploy-${dockerImage} deploy-${dockerImage}-container=biswalashu/${dockerImage} -n ${NAMESPACE}'
+                    sh 'kubectl set image deployment/deploy-${dockerImage} deploy-app-${dockerImage}-container=biswalashu/${dockerImage} -n ${NAMESPACE}'
                 }
             }
         }
