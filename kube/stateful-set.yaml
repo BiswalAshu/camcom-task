@@ -26,6 +26,8 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
+            - name: data-volume
+              mountPath: /docker-entrypoint-initdb.d
           resources:
             requests:
               cpu: 62m
@@ -33,28 +35,6 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
-      # init containers
-      initContainers:
-        - name: init-script
-          image: mysql:latest
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              until mysqladmin ping -h localhost:3306 -u root -p$MYSQL_ROOT_PASSWORD --silent; do
-                echo "not connected"
-                sleep 5
-              done
-              echo "connection established"
-              mysql -h localhost:3306 -u root -p$MYSQL_ROOT_PASSWORD -e "source /docker-entrypoint-initdb.d/init.sql"
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              value: root
-          volumeMounts:
-            - name: mysql-persistent-storage
-              mountPath: /var/lib/mysql
-            - name: data-volume
-              mountPath: /docker-entrypoint-initdb.d
-
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
@@ -62,3 +42,25 @@ spec:
         - name: data-volume
           configMap:
             name: data-config
+
+      # init containers
+      # initContainers:
+      #   - name: init-script
+      #     image: mysql:latest
+      #     command: ["/bin/sh", "-c"]
+      #     args:
+      #       - |
+      #         until mysqladmin ping -h localhost:3306 -u root -p$MYSQL_ROOT_PASSWORD --silent; do
+      #           echo "not connected"
+      #           sleep 5
+      #         done
+      #         echo "connection established"
+      #         mysql -h localhost:3306 -u root -p$MYSQL_ROOT_PASSWORD -e "source /docker-entrypoint-initdb.d/init.sql"
+      #     env:
+      #       - name: MYSQL_ROOT_PASSWORD
+      #         value: root
+      #     volumeMounts:
+      #       - name: mysql-persistent-storage
+      #         mountPath: /var/lib/mysql
+            # - name: data-volume
+            #   mountPath: /docker-entrypoint-initdb.d
